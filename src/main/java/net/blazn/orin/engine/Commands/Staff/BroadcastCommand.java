@@ -28,6 +28,7 @@ public class BroadcastCommand implements CommandExecutor {
 
         plugin.getCommand("broadcast").setExecutor(this);
         plugin.getCommand("bc").setExecutor(this); // Alias
+        plugin.getCommand("announce").setExecutor(this);
     }
 
     @Override
@@ -52,14 +53,14 @@ public class BroadcastCommand implements CommandExecutor {
         String message = String.join(" ", args);
 
         // Format message
-        String formatted = /*ChatUtil.bgold + "📢"+ */ ChatUtil.bdarkRed + "BROADCAST " + ChatUtil.darkGray + "| " + ChatUtil.white + message;
+        String formatted = /*ChatUtil.bgold + "📢"+ */ ChatUtil.bdarkRed + "ANNOUNCEMENT " + ChatUtil.darkGray + "| " + ChatUtil.white + message;
 
         // Send chat message to all players
         Bukkit.getOnlinePlayers().forEach(p -> {
             p.sendMessage(formatted);
 
             // Show title in center of screen
-            p.sendTitle(/*ChatUtil.bgold + "📢"+ */ ChatUtil.bdarkRed + "ʙʀᴏᴀᴅᴄᴀѕᴛ", ChatUtil.white + message, 10, 70, 20);
+            p.sendTitle(/*ChatUtil.bgold + "📢"+ */ ChatUtil.bdarkRed + "ᴀɴɴᴏᴜɴᴄᴇᴍᴇɴᴛ", ChatUtil.white + message, 10, 70, 20);
 
             // Play a notification sound
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f);

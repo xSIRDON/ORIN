@@ -20,6 +20,10 @@ commands:
     description: Sends private message to another player.
     usage: /msg <player> <message>
     permission: orin.message
+  ping:
+    description: Shows player connection to the server.
+    usage: /ping
+    permission: orin.ping
   # Staff Commands
   staff:
     description: Enables staff-chat.
@@ -44,6 +48,14 @@ commands:
     description: Clears player inventory.
     usage: /clear <player>
     permission: orin.clear
+  freeze:
+    description: Freezes player(s).
+    usage: /freeze <player|all>
+    permission: orin.freeze
+  unfreeze:
+    description: Unfreezes player(s).
+    usage: /unfreeze <player|all>
+    permission: orin.unfreeze
   godmode:
     description: Toggle invincibility mode.
     usage: /godmode <player>
@@ -91,7 +103,7 @@ commands:
   broadcast:
     description: Broadcasts server message.
     usage: /broadcast <message>
-    aliases: [ bc, say ]
+    aliases: [ bc, say, announce ]
     permission: orin.broadcast
   # Punishment Commands
   kick:
@@ -134,6 +146,9 @@ permissions:
   orin.message:
     description: Allows player to send private messages.
     default: true
+  orin.ping:
+    description: Allows a player to see connection to server.
+    default: true
   # Staff perms
   orin.rank:
     description: Allows a player to set ranks.
@@ -154,6 +169,12 @@ permissions:
   # Operator perms
   orin.clear:
     description: Allows a player to clear their inventory for themselves or others.
+    default: true
+  orin.freeze:
+    description: Allows a player to freeze player(s).
+    default: true
+  orin.unfreeze:
+    description: Allows a player to unfreeze player(s).
     default: true
   orin.gamemode:
     description: Allows a player to change their game mode.

@@ -36,6 +36,10 @@ messages:
     enabled: true
     format: "{displayname} &fhas left."
 
+# ✅ Tablist Settings
+tablist:
+  show-ping: false
+
 # ✅ Punishment Settings
 punishments:
   # GUI Punishment Durations

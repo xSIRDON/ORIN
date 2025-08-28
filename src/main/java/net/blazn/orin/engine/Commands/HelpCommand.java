@@ -48,6 +48,7 @@ public class HelpCommand implements CommandExecutor {
         addCommand(generalCommands, "/help", "Shows this help menu.");
         addCommand(generalCommands, "/list", "Shows list of online players.");
         addCommand(generalCommands, "/msg <player> [msg]", "Sends private message to another player.");
+        addCommand(generalCommands, "/ping", "Shows your connection to the server.");
 
         // Staff Commands (MOD+)
         addCommand(staffCommands, "/staff", "Enable staff chat mode.");
@@ -67,7 +68,7 @@ public class HelpCommand implements CommandExecutor {
         addCommand(adminCommands, "/clearhistory [player]", "Clear a player's punishment history.");
         addCommand(adminCommands, "/unban <player>", "Unbans player from server.");
         addCommand(adminCommands, "/unmute <player>", "Unmutes player.");
-        addCommand(adminCommands, "/broadcast", "Broadcast server message.");
+        addCommand(adminCommands, "/broadcast <message>", "Broadcast server message.");
 
         // Premium Commands
         addCommand(premiumCommands, "/nick <name>", "Change your nickname.");
@@ -75,6 +76,8 @@ public class HelpCommand implements CommandExecutor {
 
         // Operator Commands (ADMIN+)
         addCommand(opCommands, "/clear [player]", "Clear inventory.");
+        addCommand(opCommands, "/freeze [player|all]", "Freeze server or player.");
+        addCommand(opCommands, "/unfreeze [player|all]", "Unfreeze server or player.");
         addCommand(opCommands, "/godmode [player]", "Toggle god mode.");
         addCommand(opCommands, "/gamemode <mode> [player]", "Change gamemode.");
         addCommand(opCommands, "/heal [player]", "Heal yourself or others.");

@@ -268,18 +268,39 @@ public class RankManager {
         // Set player display name (used in chat)
         player.setDisplayName(formattedName);
 
+        // ✅ Add ping next to their name in tablist
+        int ping = player.getPing();
+        String pingColor = (ping <= 80) ? ChatUtil.green : (ping <= 150) ? ChatUtil.yellow : ChatUtil.red;
+        String pingSuffix = ChatUtil.gray + " (" + pingColor + ping + "ms" + ChatUtil.gray + ")";
+
         // Check if config wants chat prefixes
         boolean usePrefix = shouldUseChatPrefixes();
         if (usePrefix) {
             String prefix = getRankPrefix(rank); // assumes you already added this method
-            player.setPlayerListName(ChatColor.WHITE + ChatUtil.stripSec(prefix + strippedName));
+            if (plugin.getConfig().getBoolean("tablist.show-ping")) {
+                player.setPlayerListName(ChatColor.WHITE + ChatUtil.stripSec(prefix + strippedName) + pingSuffix);
+            } else {
+                player.setPlayerListName(ChatColor.WHITE + ChatUtil.stripSec(prefix + strippedName));
+            }
         } else {
-            player.setPlayerListName(formattedName);
+            if (plugin.getConfig().getBoolean("tablist.show-ping")) {
+                player.setPlayerListName(formattedName + pingSuffix);
+            } else {
+                player.setPlayerListName(formattedName);
+            }
         }
 
         updateNameTag(player, rank, rankColor);
     }
 
+    public void startPingTabUpdater() {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                String rank = getRank(p);
+                updateDisplayName(p, rank);
+            }
+        }, 0L, 40L); // every 2 seconds
+    }
 
     private void updateNameTag(Player player, String rank, String rankColor) {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();

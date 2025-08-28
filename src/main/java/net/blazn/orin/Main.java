@@ -4,13 +4,11 @@ import net.blazn.orin.engine.Commands.HelpCommand;
 import net.blazn.orin.engine.Commands.ListCommand;
 import net.blazn.orin.engine.Commands.MessageCommand;
 import net.blazn.orin.engine.Commands.Operator.*;
+import net.blazn.orin.engine.Commands.PingCommand;
 import net.blazn.orin.engine.Commands.Premium.NickCommand;
 import net.blazn.orin.engine.Commands.Punishment.*;
 import net.blazn.orin.engine.Commands.Staff.*;
-import net.blazn.orin.engine.Listeners.ChatListener;
-import net.blazn.orin.engine.Listeners.JoinListener;
-import net.blazn.orin.engine.Listeners.QuitListener;
-import net.blazn.orin.engine.Listeners.ServerListPingListener;
+import net.blazn.orin.engine.Listeners.*;
 import net.blazn.orin.engine.Listeners.Staff.PunishmentListener;
 import net.blazn.orin.engine.Listeners.Staff.RankListener;
 import net.blazn.orin.engine.Listeners.Staff.WatchdogListener;
@@ -24,6 +22,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public final class Main extends JavaPlugin {
 
@@ -35,6 +36,8 @@ public final class Main extends JavaPlugin {
     private PunishmentManager punishmentManager;
     private TablistManager tablistManager;
     private WatchdogManager watchdogManager;
+
+    Set<UUID> frozenPlayers = new HashSet<>();
 
     private static final String PLUGIN_NAME = "orin-1.0-SNAPSHOT";
     private static File pluginFile;
@@ -52,6 +55,7 @@ public final class Main extends JavaPlugin {
         startUpdateChecker();
         getLogger().info("✅ ORIN has been enabled!");
         tablistManager.setTablistForAll("&b&lᴏʀɪɴ ɴᴇᴛᴡᴏʀᴋ\n&7ᴏɴʟɪɴᴇ ᴘʟᴀʏᴇʀѕ&8: &f" + Bukkit.getOnlinePlayers().size() + "\n ", " \n&eᴏʀɪɴ.ᴍᴏᴅᴅᴇᴅ.ꜰᴜɴ");
+        rankManager.startPingTabUpdater();
     }
 
     @Override
@@ -83,6 +87,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RankListener(this, rankManager, nameManager), this);
         getServer().getPluginManager().registerEvents(new JoinListener(this, nameManager, rankManager, tablistManager), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this, rankManager, nameManager, permissionsManager), this);
+        getServer().getPluginManager().registerEvents(new FreezeListener(this, new FreezeCommand(this, rankManager, permissionsManager, frozenPlayers)), this);
         getServer().getPluginManager().registerEvents(new QuitListener(this, nameManager, rankManager, tablistManager), this);
         getServer().getPluginManager().registerEvents(new ServerListPingListener(this, motdManager), this);
         getServer().getPluginManager().registerEvents(new PunishmentListener(this, rankManager, punishmentManager, nameManager), this);
@@ -94,6 +99,7 @@ public final class Main extends JavaPlugin {
         getCommand("help").setExecutor(new HelpCommand(this, rankManager));
         getCommand("list").setExecutor(new ListCommand(this, rankManager, watchdogManager));
         getCommand("msg").setExecutor(new MessageCommand(this, rankManager));
+        getCommand("ping").setExecutor(new PingCommand(this));
 
         //STAFF COMMANDS
         getCommand("broadcast").setExecutor(new BroadcastCommand(this, rankManager, permissionsManager));
@@ -121,6 +127,8 @@ public final class Main extends JavaPlugin {
 
         //OPERATOR COMMANDS
         getCommand("clear").setExecutor(new ClearCommand(this, rankManager, permissionsManager));
+        getCommand("freeze").setExecutor(new FreezeCommand(this, rankManager, permissionsManager, frozenPlayers));
+        getCommand("unfreeze").setExecutor(new FreezeCommand(this, rankManager, permissionsManager, frozenPlayers));
         getCommand("gamemode").setExecutor(new GamemodeCommand(this, rankManager, permissionsManager));
         getCommand("gmc").setExecutor(new GamemodeCommand(this, rankManager, permissionsManager));
         getCommand("gms").setExecutor(new GamemodeCommand(this, rankManager, permissionsManager));
