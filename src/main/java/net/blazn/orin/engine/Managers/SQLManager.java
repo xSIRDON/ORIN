@@ -11,6 +11,7 @@ public class SQLManager {
     private Connection connection;
     private final JavaPlugin plugin;
     private long lastReconnectionAttempt = 0; // 🔹 Prevents spam reconnect attempts
+    private boolean loggedConnectedMessage = false; // 🔹 NEW: track if we've already logged success
 
     public SQLManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -48,7 +49,11 @@ public class SQLManager {
                 return;
             }
 
-            plugin.getLogger().info("✅ Successfully connected to the database.");
+            // ✅ Only log once for the lifetime of the plugin
+            if (!loggedConnectedMessage) {
+                plugin.getLogger().info("✅ Successfully connected to the database.");
+                loggedConnectedMessage = true;
+            }
 
             // ✅ Ensure tables exist
             executeUpdate("CREATE TABLE IF NOT EXISTS ranks (uuid VARCHAR(36) PRIMARY KEY, `rank` VARCHAR(20) NOT NULL)");
@@ -79,7 +84,7 @@ public class SQLManager {
             }
             lastReconnectionAttempt = now;
 
-            plugin.getLogger().warning("⛔ Database connection was closed. Reconnecting...");
+            //plugin.getLogger().warning("⛔ Database connection was closed. Reconnecting...");
             setupDatabase();
 
             return connection != null && !connection.isClosed();
@@ -98,7 +103,7 @@ public class SQLManager {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().severe("❌ SQL Error: " + e.getMessage());
+            //plugin.getLogger().severe("❌ SQL Error: " + e.getMessage());
         }
     }
 
@@ -126,7 +131,7 @@ public class SQLManager {
      */
     public Connection getConnection() {
         if (!ensureConnection()) {
-            plugin.getLogger().severe("❌ Database connection is NULL! Reconnecting...");
+            //plugin.getLogger().severe("❌ Database connection is NULL! Reconnecting...");
             setupDatabase();
         }
         return connection;

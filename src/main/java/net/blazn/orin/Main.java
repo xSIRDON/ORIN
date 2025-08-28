@@ -6,11 +6,7 @@ import net.blazn.orin.engine.Commands.MessageCommand;
 import net.blazn.orin.engine.Commands.Operator.*;
 import net.blazn.orin.engine.Commands.Premium.NickCommand;
 import net.blazn.orin.engine.Commands.Punishment.*;
-import net.blazn.orin.engine.Commands.Staff.ClearHistoryCommand;
-import net.blazn.orin.engine.Commands.Staff.HistoryCommand;
-import net.blazn.orin.engine.Commands.Staff.RankCommand;
-import net.blazn.orin.engine.Commands.Staff.StaffCommand;
-import net.blazn.orin.engine.Commands.Staff.WatchdogCommand;
+import net.blazn.orin.engine.Commands.Staff.*;
 import net.blazn.orin.engine.Listeners.ChatListener;
 import net.blazn.orin.engine.Listeners.JoinListener;
 import net.blazn.orin.engine.Listeners.QuitListener;
@@ -100,6 +96,7 @@ public final class Main extends JavaPlugin {
         getCommand("msg").setExecutor(new MessageCommand(this, rankManager));
 
         //STAFF COMMANDS
+        getCommand("broadcast").setExecutor(new BroadcastCommand(this, rankManager, permissionsManager));
         getCommand("history").setExecutor(new HistoryCommand(this, punishmentManager, rankManager, nameManager));
         getCommand("staff").setExecutor(new StaffCommand(this, rankManager));
         getCommand("watchdog").setExecutor(new WatchdogCommand(this, watchdogManager, rankManager, permissionsManager));

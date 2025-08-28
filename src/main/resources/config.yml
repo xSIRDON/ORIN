@@ -4,11 +4,11 @@ server-website: "orinnetwork.gg"
 
 # ✅ MySQL Database Settings
 database:
-  host: "gamesla31.bisecthosting.com"
+  host: "gamesla50.bisecthosting.com"
   port: "3306"
-  name: "s407977_ORIN"
-  user: "u407977_b7jwCzwiYg"
-  password: "tlzWFbzOtW77SUHRpHZviKU7"
+  name: "s1028691_ORIN"
+  user: "u1028691_AneLu9EOx2"
+  password: "xNbqXYo8s0rx8sbM5L9wuSZP"
 
 # ✅ Server Prefixes
 server-prefix: "&3&lORIN &8| &f"
@@ -31,10 +31,10 @@ chat:
 messages:
   join:
     enabled: true # Set to false to disable join messages
-    format: "{displayname} &7has joined."
+    format: "{displayname} &fhas joined."
   quit:
     enabled: true
-    format: "{displayname} &7has left."
+    format: "{displayname} &fhas left."
 
 # ✅ Punishment Settings
 punishments:

@@ -1,7 +1,7 @@
 name: ORIN
 version: '1.0-SNAPSHOT'
 main: net.blazn.orin.Main
-author: Blazn
+author: BLAZN
 description: Server management system
 api-version: 1.21 # Change to your server's version
 
@@ -88,6 +88,11 @@ commands:
     description: Clears a player's punishment history.
     usage: /clearhistory <player>
     permission: orin.clearhistory
+  broadcast:
+    description: Broadcasts server message.
+    usage: /broadcast <message>
+    aliases: [ bc, say ]
+    permission: orin.broadcast
   # Punishment Commands
   kick:
     description: Kick a player from the server.
@@ -132,7 +137,7 @@ permissions:
   # Staff perms
   orin.rank:
     description: Allows a player to set ranks.
-    default: true
+    default: op
   orin.staff:
     description: Allows a player to use staff-chat.
     default: true
@@ -167,7 +172,7 @@ permissions:
     default: true
   orin.setmotd:
     description: Allows setting of MOTD.
-    default: true
+    default: op
   # Punishment perms
   orin.kick:
     description: Allows a player to kick others.
@@ -195,7 +200,7 @@ permissions:
     default: true
   orin.clearhistory:
     description: Allows a player to clear another player's punishment history.
-    default: true
+    default: op
   orin.warn:
     description: Allows a player to warn another player.
     default: true

@@ -67,6 +67,7 @@ public class HelpCommand implements CommandExecutor {
         addCommand(adminCommands, "/clearhistory [player]", "Clear a player's punishment history.");
         addCommand(adminCommands, "/unban <player>", "Unbans player from server.");
         addCommand(adminCommands, "/unmute <player>", "Unmutes player.");
+        addCommand(adminCommands, "/broadcast", "Broadcast server message.");
 
         // Premium Commands
         addCommand(premiumCommands, "/nick <name>", "Change your nickname.");

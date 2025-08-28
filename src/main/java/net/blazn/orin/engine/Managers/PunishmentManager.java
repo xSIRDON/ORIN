@@ -200,7 +200,7 @@ public class PunishmentManager {
             if (target.isOnline()) {
                 Player player = target.getPlayer();
                 if (player != null) {
-                    player.sendMessage(ChatUtil.serverPrefix + ChatUtil.green + "✔ " + ChatUtil.white + "You have been unmuted.");
+                    player.sendMessage(ChatUtil.green + "✔ " + ChatUtil.white + "You have been unmuted.");
                 }
             }
 
