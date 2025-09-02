@@ -39,6 +39,14 @@ public class FreezeCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         boolean freezeAction = cmd.getName().equalsIgnoreCase("freeze");
 
+        if ((sender instanceof Player player)) {
+            String playerRank = rankManager.getRank(player);
+            if (!allowedRanks.contains(playerRank.toUpperCase())) {
+                sender.sendMessage(ChatUtil.noPermission);
+                return true;
+            }
+        }
+
         if (args.length == 0) {
             sender.sendMessage(ChatUtil.red + "Usage" + ChatUtil.darkGray + ": " + ChatUtil.white + "/" + label + " <player|all>");
             return true;

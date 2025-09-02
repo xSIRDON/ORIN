@@ -1,5 +1,6 @@
 package net.blazn.orin.engine.Listeners.Staff;
 
+import net.blazn.orin.engine.Managers.DisguiseManager;
 import net.blazn.orin.engine.Managers.NameManager;
 import net.blazn.orin.engine.Managers.RankManager;
 import net.blazn.orin.engine.Utils.ChatUtil;
@@ -20,12 +21,14 @@ public class RankListener implements Listener {
 
     private final RankManager rankManager;
     private final NameManager nameManager;
+    private final DisguiseManager disguiseManager;
     private final JavaPlugin plugin;
 
-    public RankListener(JavaPlugin plugin, RankManager rankManager, NameManager nameManager) {
+    public RankListener(JavaPlugin plugin, RankManager rankManager, NameManager nameManager, DisguiseManager disguiseManager) {
         this.plugin = plugin;
         this.rankManager = rankManager;
         this.nameManager = nameManager;
+        this.disguiseManager = disguiseManager;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -121,14 +124,21 @@ public class RankListener implements Listener {
         // ✅ Retrieve the stored nickname from database
         String storedNickname = nameManager.getStoredNickname(uuid);
 
-        // ✅ Use nickname if it exists; otherwise, use real name
-        String displayName = (storedNickname != null && !storedNickname.isEmpty()) ? storedNickname : player.getName();
+        // If no nickname exists, save current displayName as nickname
+        if (storedNickname == null || storedNickname.isEmpty()) {
+            String currentDisplayName = player.getDisplayName(); // this includes any § codes
+            String playerRank = rankManager.getRank(player.getUniqueId());
+            nameManager.setNickname(uuid, rankManager.getRankColor(playerRank) + currentDisplayName);
+            storedNickname = currentDisplayName;
+            plugin.getLogger().info("✅ Set initial nickname for " + player.getName() + " to " + currentDisplayName);
+        }
 
-        // ✅ Apply display name & scoreboard
-        player.setDisplayName(displayName);
+        // Apply display name & scoreboard
+        player.setDisplayName(storedNickname);
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 
-        // ✅ Update display name & nametag immediately
+        // Update display name & nametag immediately
+        disguiseManager.undisguise(player);
         rankManager.updateDisplayName(player, rank);
     }
 

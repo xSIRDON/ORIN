@@ -5,9 +5,11 @@ import net.blazn.orin.engine.Commands.ListCommand;
 import net.blazn.orin.engine.Commands.MessageCommand;
 import net.blazn.orin.engine.Commands.Operator.*;
 import net.blazn.orin.engine.Commands.PingCommand;
+import net.blazn.orin.engine.Commands.Premium.DisguiseCommand;
 import net.blazn.orin.engine.Commands.Premium.NickCommand;
 import net.blazn.orin.engine.Commands.Punishment.*;
 import net.blazn.orin.engine.Commands.Staff.*;
+import net.blazn.orin.engine.Hook.ProtocolLibHook;
 import net.blazn.orin.engine.Listeners.*;
 import net.blazn.orin.engine.Listeners.Staff.PunishmentListener;
 import net.blazn.orin.engine.Listeners.Staff.RankListener;
@@ -22,9 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public final class Main extends JavaPlugin {
 
@@ -32,12 +32,16 @@ public final class Main extends JavaPlugin {
     private NameManager nameManager;
     private RankManager rankManager;
     private MOTDManager motdManager;
+    private DisguiseManager disguiseManager;
+    private NametagManager nametagManager;
     private PermissionsManager permissionsManager;
     private PunishmentManager punishmentManager;
     private TablistManager tablistManager;
     private WatchdogManager watchdogManager;
+    //private ProtocolLibHook protocolLibHook;
 
     Set<UUID> frozenPlayers = new HashSet<>();
+    private static Map<UUID, String> playerTags = new HashMap<>();
 
     private static final String PLUGIN_NAME = "orin-1.0-SNAPSHOT";
     private static File pluginFile;
@@ -75,8 +79,13 @@ public final class Main extends JavaPlugin {
     private void registerManagers() {
         sqlManager = new SQLManager(this);
         nameManager = new NameManager(this, sqlManager);
-        rankManager = new RankManager(this, sqlManager, nameManager);
+//        protocolLibHook = new ProtocolLibHook(this, nameManager);
+//        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
+//            protocolLibHook.register();
+//        }
+        rankManager = new RankManager(this, sqlManager, nameManager, nametagManager);
         motdManager = new MOTDManager(this);
+        disguiseManager = new DisguiseManager(this, nameManager, rankManager);
         permissionsManager = new PermissionsManager(ranksConfig);
         punishmentManager = new PunishmentManager(this, sqlManager);
         tablistManager = new TablistManager(this);
@@ -84,20 +93,20 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new RankListener(this, rankManager, nameManager), this);
+        getServer().getPluginManager().registerEvents(new RankListener(this, rankManager, nameManager, disguiseManager), this);
         getServer().getPluginManager().registerEvents(new JoinListener(this, nameManager, rankManager, tablistManager), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this, rankManager, nameManager, permissionsManager), this);
         getServer().getPluginManager().registerEvents(new FreezeListener(this, new FreezeCommand(this, rankManager, permissionsManager, frozenPlayers)), this);
         getServer().getPluginManager().registerEvents(new QuitListener(this, nameManager, rankManager, tablistManager), this);
         getServer().getPluginManager().registerEvents(new ServerListPingListener(this, motdManager), this);
         getServer().getPluginManager().registerEvents(new PunishmentListener(this, rankManager, punishmentManager, nameManager), this);
-        getServer().getPluginManager().registerEvents(new WatchdogListener(this, watchdogManager), this);
+        getServer().getPluginManager().registerEvents(new WatchdogListener(this, rankManager, nameManager, watchdogManager), this);
     }
 
     private void registerCommands() {
         //REGULAR COMMANDS
         getCommand("help").setExecutor(new HelpCommand(this, rankManager));
-        getCommand("list").setExecutor(new ListCommand(this, rankManager, watchdogManager));
+        getCommand("list").setExecutor(new ListCommand(this, rankManager, nameManager, permissionsManager, watchdogManager));
         getCommand("msg").setExecutor(new MessageCommand(this, rankManager));
         getCommand("ping").setExecutor(new PingCommand(this));
 
@@ -122,6 +131,8 @@ public final class Main extends JavaPlugin {
         getCommand("unmute").setExecutor(new UnmuteCommand(this, rankManager, nameManager, permissionsManager, punishmentManager));
 
         //PREMIUM COMMANDS
+        getCommand("disguise").setExecutor(new DisguiseCommand(this, rankManager, disguiseManager));
+        getCommand("undisguise").setExecutor(new DisguiseCommand(this, rankManager, disguiseManager));
         getCommand("nick").setExecutor(new NickCommand(nameManager, rankManager, permissionsManager));
         getCommand("fly").setExecutor(new FlyCommand(this, rankManager, permissionsManager));
 
@@ -166,5 +177,13 @@ public final class Main extends JavaPlugin {
                 getLogger().severe("❌ Failed to check plugin update timestamp: " + e.getMessage());
             }
         }, 0L, 200L); // Runs every 5 seconds (200 ticks)
+    }
+
+    public static Map<UUID, String> getPlayerTags() {
+        return playerTags;
+    }
+
+    public static Main getInstance() {
+        return getPlugin(Main.class);
     }
 }

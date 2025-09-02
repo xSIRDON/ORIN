@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/net.blazn.orin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/net.blazn.orin.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/net.blazn.orin.test.iml" filepath="$PROJECT_DIR$/.idea/modules/net.blazn.orin.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/orin.iml" filepath="$PROJECT_DIR$/orin.iml" />
     </modules>
   </component>

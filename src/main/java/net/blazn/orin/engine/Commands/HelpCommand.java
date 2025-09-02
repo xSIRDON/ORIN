@@ -71,6 +71,7 @@ public class HelpCommand implements CommandExecutor {
         addCommand(adminCommands, "/broadcast <message>", "Broadcast server message.");
 
         // Premium Commands
+        addCommand(premiumCommands, "/disguise", "Disguise as another player.");
         addCommand(premiumCommands, "/nick <name>", "Change your nickname.");
         addCommand(premiumCommands, "/fly [player]", "Toggle flight for yourself or others.");
 

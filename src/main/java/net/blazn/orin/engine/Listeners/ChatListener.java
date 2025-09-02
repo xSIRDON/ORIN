@@ -78,9 +78,10 @@ public class ChatListener implements Listener {
             String rankColor = rankChatColors.getOrDefault(rank.toUpperCase(), "&7");
             boolean usePrefixFormat = rankManager.shouldUseChatPrefixes();
             String staffMessage = "";
-            
+
             if (StaffCommand.isStaffChatEnabled(player)) {
                 event.setCancelled(true);
+                boolean isDisguised = rankManager.isDisguised(player);
                 if (usePrefixFormat) {
                     if (!rank.equals("MEMBER")) {
                         String prefix = rankManager.getRankPrefix(rank);
@@ -90,7 +91,11 @@ public class ChatListener implements Listener {
                         staffMessage = ChatUtil.staffPrefix + ChatUtil.swapAmp(prefix) + ChatUtil.gray + ChatUtil.stripSec(displayName) + ChatUtil.darkGray + ": " + ChatUtil.aqua + event.getMessage();
                     }
                 } else {
-                    staffMessage = ChatUtil.staffPrefix + ChatUtil.bgold + displayName + ChatUtil.darkGray + ": " + ChatUtil.aqua + event.getMessage();
+                    if (isDisguised) {
+                        staffMessage = ChatUtil.staffPrefix + ChatUtil.bgold + nameManager.getNickname(player.getUniqueId()) + ChatUtil.darkGray + ": " + ChatUtil.aqua + event.getMessage();
+                    } else {
+                        staffMessage = ChatUtil.staffPrefix + ChatUtil.bgold + displayName + ChatUtil.darkGray + ": " + ChatUtil.aqua + event.getMessage();
+                    }
                 }
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (permissionsManager.getRankLevel(rankManager.getRank(p)) >= 6) {
@@ -101,17 +106,33 @@ public class ChatListener implements Listener {
             }
 
             String formattedChat;
+            boolean isDisguised = rankManager.isDisguised(player);
             if (usePrefixFormat) {
-                String prefix = rankManager.getRankPrefix(rank);
-                formattedChat = ChatUtil.swapAmp(prefix) + ChatUtil.white + ChatUtil.stripSec(displayName) + ChatUtil.darkGray + ": " + ChatUtil.swapAmp(rankColor) + event.getMessage();
+                if (isDisguised) {
+                    String fakeRank = rankManager.getFakeRank(player);
+                    String prefix = rankManager.getRankPrefix(fakeRank);
+                    formattedChat = ChatUtil.swapAmp(prefix) + ChatUtil.white + ChatUtil.stripSec(displayName) + ChatUtil.darkGray + ": " + ChatUtil.swapAmp(rankColor) + event.getMessage();
+                } else {
+                    String prefix = rankManager.getRankPrefix(rank);
+                    formattedChat = ChatUtil.swapAmp(prefix) + ChatUtil.white + ChatUtil.stripSec(displayName) + ChatUtil.darkGray + ": " + ChatUtil.swapAmp(rankColor) + event.getMessage();
+                }
             } else {
-                String chatFormat = config.getString("chat.format", "{displayname}&8: {message}");
-                chatFormat = chatFormat
-                        .replace("{displayname}", displayName)
-                        .replace("{message}", ChatUtil.swapAmp(rankColor) + event.getMessage());
-                formattedChat = ChatUtil.swapAmp(chatFormat);
+                if (isDisguised) {
+                    String chatFormat = config.getString("chat.format", "{displayname}&8: {message}");
+                    String fakeRank = rankManager.getFakeRank(player);
+                    String fakeChatColor = rankManager.getChatColor(fakeRank);
+                    chatFormat = chatFormat
+                            .replace("{displayname}", displayName)
+                            .replace("{message}", fakeChatColor + event.getMessage());
+                    formattedChat = ChatUtil.swapAmp(chatFormat);
+                } else {
+                    String chatFormat = config.getString("chat.format", "{displayname}&8: {message}");
+                    chatFormat = chatFormat
+                            .replace("{displayname}", displayName)
+                            .replace("{message}", ChatUtil.swapAmp(rankColor) + event.getMessage());
+                    formattedChat = ChatUtil.swapAmp(chatFormat);
+                }
             }
-
             event.setFormat(formattedChat);
         }
     }

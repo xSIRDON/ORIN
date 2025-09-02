@@ -36,6 +36,18 @@ public class NickCommand implements CommandExecutor {
         UUID uuid = player.getUniqueId();
         boolean hasNick = nameManager.hasStoredNickname(uuid); // ✅ Direct DB Check
 
+        // ✅ Check if player has permission to nick (Emerald+)
+        String rank = rankManager.getRank(player);
+        if (permissionsManager.getRankLevel(rank) < 5) {
+            player.sendMessage(ChatUtil.noPermission);
+            return true;
+        }
+
+        if (rankManager.isDisguised(player)) {
+            player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " You cannot change your name while disguised.");
+            return true;
+        }
+
         // ✅ If args are empty, check if player has a nickname in the database
         if (args.length == 0) {
             if (!hasNick) {
@@ -55,22 +67,24 @@ public class NickCommand implements CommandExecutor {
             return true;
         }
 
-        // ✅ Ensure nickname is unique (no duplicates)
-        if (isNickTaken(newNick)) {
+        // ✅ Ensure nickname is unique (no duplicates among nickname or disguise_name)
+        if (nameManager.isNicknameTaken(newNick)) {
             player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " This nickname is already in use!");
             return true;
         }
 
-        // ✅ Check if player has permission to nick (Emerald+)
-        String rank = rankManager.getRank(player);
-        if (permissionsManager.getRankLevel(rank) < 5) {
-            player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " Must be at least EMERALD to use this command.");
-            return true;
+        // ✅ Set the new nickname
+        String playerRank = rankManager.getRank(uuid);
+        if (!playerRank.equalsIgnoreCase("DEVELOPER")) {
+            String storedNickname = rankManager.getRankPrefix(playerRank) + newNick;
+            nameManager.setNickname(uuid, storedNickname);
+            player.setDisplayName(newNick);
+        } else {
+            String storedNickname = ChatUtil.rainbowBold(newNick);
+            nameManager.setNickname(uuid, storedNickname);
+            player.setDisplayName(newNick);
         }
 
-        // ✅ Set the new nickname
-        player.setDisplayName(newNick);
-        nameManager.setNickname(uuid, newNick);
         rankManager.updateDisplayName(player, rank);
 
         player.sendMessage(ChatUtil.green + "✔" + ChatUtil.white + " Your nickname is now" + ChatUtil.darkGray + ": " + rankManager.getRankColor(rank) + newNick);
@@ -80,17 +94,19 @@ public class NickCommand implements CommandExecutor {
     private void resetNickname(Player player) {
         UUID uuid = player.getUniqueId();
         nameManager.removeNickname(uuid);
+
+        String playerRank = rankManager.getRank(player.getUniqueId());
+        if (!playerRank.equalsIgnoreCase("DEVELOPER")) {
+            String resetDisplayname = rankManager.getRankPrefix(playerRank) + player.getName();
+            nameManager.setNickname(player.getUniqueId(), resetDisplayname);
+            player.setDisplayName(resetDisplayname);
+        } else {
+            String resetDisplayname = ChatUtil.rainbowBold(player.getName());
+            nameManager.setNickname(player.getUniqueId(), ChatUtil.rainbowBold(player.getName()));
+            player.setDisplayName(resetDisplayname);
+        }
         rankManager.updateDisplayName(player, rankManager.getRank(player));
 
         player.sendMessage(ChatUtil.green + "✔" + ChatUtil.white + " Your nickname has been reset!");
-    }
-
-    private boolean isNickTaken(String nickname) {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (nameManager.getDisplayName(p.getUniqueId()).equalsIgnoreCase(nickname)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

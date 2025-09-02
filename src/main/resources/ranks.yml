@@ -33,17 +33,17 @@ rank-prefixes:
 
 # ✅ Rank Prefix Colors
 rank-colors:
-  OWNER: '&c&l'
+  OWNER: '&4&l'
   DEVELOPER: '&6&l'
   ADMIN: '&d&l'
   MOD: '&1&l'
   HELPER: '&e&l'
-  YOUTUBE: '&c'
-  VIP: '&6'
-  BUILDER: '&9'
-  MVP: '&d'
-  ELITE: '&3'
-  PRO: '&b'
+  YOUTUBE: '&c&l'
+  VIP: '&5&l'
+  BUILDER: '&9&l'
+  MVP: '&a'
+  ELITE: '&b'
+  PRO: '&3'
   MEMBER: '&7'
 
 # ✅ Rank Chat Colors

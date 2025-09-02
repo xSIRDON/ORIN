@@ -3,8 +3,7 @@ version: '1.0-SNAPSHOT'
 main: net.blazn.orin.Main
 author: BLAZN
 description: Server management system
-api-version: 1.21 # Change to your server's version
-
+api-version: 1.21.8 # Change to your server's version
 # ✅ Commands Registration
 commands:
   # Regular Commands
@@ -35,6 +34,14 @@ commands:
     aliases: [ wd ]
     permission: orin.watchdog
   # Premium Commands
+  disguise:
+    description: Disguise yourself as a random player.
+    usage: /disguise
+    permission: orin.disguise
+  undisguise:
+    description: Undisguise yourself.
+    usage: /undisguise
+    permission: orin.disguise
   nick:
     description: Change your nickname.
     usage: /nick <name>
@@ -160,6 +167,9 @@ permissions:
     description: Allows a player to use watchdog mode.
     default: true
   # Premium perms
+  orin.disguise:
+    description: Allows a player to disguise as a random player.
+    default: true
   orin.nick:
     description: Allows a player to set their nickname.
     default: true

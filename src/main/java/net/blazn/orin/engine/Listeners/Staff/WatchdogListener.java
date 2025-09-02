@@ -1,5 +1,7 @@
 package net.blazn.orin.engine.Listeners.Staff;
 
+import net.blazn.orin.engine.Managers.NameManager;
+import net.blazn.orin.engine.Managers.RankManager;
 import net.blazn.orin.engine.Managers.WatchdogManager;
 import net.blazn.orin.engine.Utils.ChatUtil;
 import org.bukkit.*;
@@ -24,9 +26,13 @@ import java.util.UUID;
 public class WatchdogListener implements Listener {
 
     private final JavaPlugin plugin;
+    private final RankManager rankManager;
+    private final NameManager nameManager;
     private final WatchdogManager watchdogManager;
 
-    public WatchdogListener(JavaPlugin plugin, WatchdogManager watchdogManager) {
+    public WatchdogListener(JavaPlugin plugin, RankManager rankManager, NameManager nameManager, WatchdogManager watchdogManager) {
+        this.rankManager = rankManager;
+        this.nameManager = nameManager;
         this.plugin = plugin;
         this.watchdogManager = watchdogManager;
     }
@@ -114,8 +120,17 @@ public class WatchdogListener implements Listener {
             if (skullMeta != null) {
                 skullMeta.setOwningPlayer(target);
                 skullMeta.setDisplayName(ChatUtil.gold + target.getDisplayName());
+
                 List<String> lore = new ArrayList<>();
+                // ✅ Add disguised lore if the player is disguised
+                if (rankManager.isDisguised(target)) {
+                    String disguise = nameManager.getNickname(target.getUniqueId());
+                    if (disguise != null && !disguise.isEmpty()) {
+                        lore.add(ChatUtil.gray + "Disguised player: " + ChatUtil.white + disguise + ChatUtil.gray);
+                    }
+                }
                 lore.add(ChatUtil.gray + "Click to teleport to " + ChatUtil.white + target.getDisplayName());
+
                 skullMeta.setLore(lore);
                 skull.setItemMeta(skullMeta);
             }
@@ -125,6 +140,7 @@ public class WatchdogListener implements Listener {
         player.openInventory(menu);
         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
     }
+
 
     /**
      * ✅ Handles teleportation when selecting a player in the Watchdog menu.
