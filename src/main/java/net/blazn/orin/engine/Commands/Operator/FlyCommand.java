@@ -2,6 +2,7 @@ package net.blazn.orin.engine.Commands.Operator;
 
 import net.blazn.orin.engine.Managers.PermissionsManager;
 import net.blazn.orin.engine.Managers.RankManager;
+import net.blazn.orin.engine.Managers.WatchdogManager;
 import net.blazn.orin.engine.Utils.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -17,12 +18,14 @@ public class FlyCommand implements CommandExecutor {
 
     private final RankManager rankManager;
     private final PermissionsManager permissionsManager;
+    private final WatchdogManager watchdogManager;
     private final JavaPlugin plugin;
-    private final List<String> allowedRanks = Arrays.asList("OWNER", "DEVELOPER", "ADMIN", "SRMOD");
+    private final List<String> allowedRanks = Arrays.asList("OWNER", "DEVELOPER", "ADMIN", "MOD", "HELPER");
 
-    public FlyCommand(JavaPlugin plugin, RankManager rankManager, PermissionsManager permissionsManager) {
+    public FlyCommand(JavaPlugin plugin, RankManager rankManager, PermissionsManager permissionsManager, WatchdogManager watchdogManager) {
         this.rankManager = rankManager;
         this.permissionsManager = permissionsManager;
+        this.watchdogManager = watchdogManager;
         this.plugin = plugin;
         plugin.getCommand("fly").setExecutor(this);
     }
@@ -47,6 +50,12 @@ public class FlyCommand implements CommandExecutor {
             return true;
         }
 
+        // ✅ Block if target is in Watchdog
+        if (watchdogManager.isInWatchdog(target)) {
+            sender.sendMessage(ChatUtil.darkRed + "❌ " + ChatUtil.white + "You cannot change flight for players in watchdog mode.");
+            return true;
+        }
+
         // If sender is console, allow toggling flight without restrictions
         if (!(sender instanceof Player)) {
             toggleFlight(sender, target);
@@ -55,6 +64,13 @@ public class FlyCommand implements CommandExecutor {
 
         // If sender is a player, apply rank permissions
         Player player = (Player) sender;
+
+        // ✅ Block if sender is in Watchdog
+        if (watchdogManager.isInWatchdog(player)) {
+            player.sendMessage(ChatUtil.darkRed + "❌ " + ChatUtil.white + "You cannot change flight while in watchdog mode.");
+            return true;
+        }
+
         String playerRank = rankManager.getRank(player);
         String targetRank = rankManager.getRank(target);
 
@@ -66,7 +82,7 @@ public class FlyCommand implements CommandExecutor {
 
         // Prevent lower-ranked players from modifying flight of higher-ranked ones
         if (!permissionsManager.canModify(playerRank, targetRank)) {
-            player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " You cannot modify this player's flight.");
+            player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.white + " You cannot modify this player's flight.");
             return true;
         }
 

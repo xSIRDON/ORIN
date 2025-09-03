@@ -37,10 +37,12 @@ commands:
   disguise:
     description: Disguise yourself as a random player.
     usage: /disguise
+    aliases: [ d ]
     permission: orin.disguise
   undisguise:
     description: Undisguise yourself.
     usage: /undisguise
+    aliases: [ ud ]
     permission: orin.disguise
   nick:
     description: Change your nickname.
@@ -86,6 +88,11 @@ commands:
     usage: /tp <player> | /tp <player1> <player2> | /tp <x> <y> <z>
     aliases: [teleport]
     permission: orin.teleport
+  vanish:
+    description: Make player invisible.
+    usage: /vanish | /vanish <player>
+    aliases: [ invisible, hide ]
+    permission: orin.vanish
   setmotd:
     description: Set server message of the day.
     permission: orin.setmotd
@@ -200,6 +207,9 @@ permissions:
     default: true
   orin.teleport:
     description: Allows teleportation.
+    default: true
+  orin.vanish:
+    description: Allows vanish.
     default: true
   orin.setmotd:
     description: Allows setting of MOTD.

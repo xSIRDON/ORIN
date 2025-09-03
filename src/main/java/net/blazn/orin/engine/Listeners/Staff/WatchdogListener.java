@@ -8,10 +8,11 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -19,9 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class WatchdogListener implements Listener {
 
@@ -30,12 +29,26 @@ public class WatchdogListener implements Listener {
     private final NameManager nameManager;
     private final WatchdogManager watchdogManager;
 
+    private final Map<Player, Long> lastMessageTime = new HashMap<>();
+    private final long MESSAGE_COOLDOWN = 5000; // 5 seconds
+
     public WatchdogListener(JavaPlugin plugin, RankManager rankManager, NameManager nameManager, WatchdogManager watchdogManager) {
         this.rankManager = rankManager;
         this.nameManager = nameManager;
         this.plugin = plugin;
         this.watchdogManager = watchdogManager;
     }
+
+    private boolean canSendMessage(Player player) {
+        long now = System.currentTimeMillis();
+        long last = lastMessageTime.getOrDefault(player, 0L);
+        if (now - last >= MESSAGE_COOLDOWN) {
+            lastMessageTime.put(player, now);
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * ✅ Disables all Watchdog players when the plugin is disabled.
@@ -67,7 +80,7 @@ public class WatchdogListener implements Listener {
             joiningPlayer.getInventory().clear();
             joiningPlayer.getInventory().setItem(0, getPlayerTrackerCompass());
 
-            joiningPlayer.sendMessage(ChatUtil.green + "✔" + ChatUtil.white + " You are still in Watchdog mode.");
+            joiningPlayer.sendMessage(ChatUtil.green + "✔" + ChatUtil.white + " You are still in watchdog mode.");
         }
 
         // ✅ Hide ALL active Watchdog players from the newly joined player
@@ -168,6 +181,89 @@ public class WatchdogListener implements Listener {
                 } else {
                     player.sendMessage(ChatUtil.notOnline);
                 }
+            }
+        }
+    }
+
+    /**
+     * ✅ Prevents Watchdog players from breaking blocks.
+     */
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        if (watchdogManager.isInWatchdog(player)) {
+            event.setCancelled(true);
+            if (canSendMessage(player)) {
+                player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " You cannot break blocks while in watchdog mode.");
+            }
+        }
+    }
+
+    /**
+     * ✅ Prevents Watchdog players from placing blocks.
+     */
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        if (watchdogManager.isInWatchdog(player)) {
+            event.setCancelled(true);
+            if (canSendMessage(player)) {
+                player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " You cannot place blocks while in watchdog mode.");
+            }
+        }
+    }
+
+    /**
+     * ✅ Prevents Watchdog players from changing gamemode.
+     */
+    @EventHandler
+    public void onGameModeChange(PlayerGameModeChangeEvent event) {
+        Player player = event.getPlayer();
+        if (watchdogManager.isInWatchdog(player)) {
+            event.setCancelled(true);
+            //player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.white + " You cannot change gamemode while in watchdog mode.");
+        }
+    }
+
+    /**
+     * ✅ Prevents Watchdog players from dropping items.
+     */
+    @EventHandler
+    public void onItemDrop(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        if (watchdogManager.isInWatchdog(player)) {
+            event.setCancelled(true);
+            if (canSendMessage(player)) {
+                player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " You cannot drop items while in watchdog mode.");
+            }
+        }
+    }
+
+    /**
+     * ✅ Prevents Watchdog players from picking up items.
+     * Use EntityPickupItemEvent for 1.13+, PlayerPickupItemEvent for older versions.
+     */
+    @EventHandler
+    public void onItemPickup(EntityPickupItemEvent event) {
+        if (event.getEntity() instanceof Player player && watchdogManager.isInWatchdog(player)) {
+            event.setCancelled(true);
+            //player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.white + " You cannot pick up items while in watchdog mode.");
+        }
+    }
+
+    /**
+     * ✅ Prevents Watchdog players from moving items around in their own inventory.
+     */
+    @EventHandler
+    public void onInventoryClickGeneral(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+
+        if (watchdogManager.isInWatchdog(player)) {
+            // Already handled separately for the Watchdog GUI, so skip that
+            if (event.getView().getTitle().equals(ChatUtil.bgold + "ᴡᴀᴛᴄʜᴅᴏɢ")) return;
+            event.setCancelled(true);
+            if (canSendMessage(player)) {
+                player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " You cannot drop items while in watchdog mode.");
             }
         }
     }

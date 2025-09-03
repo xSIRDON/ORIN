@@ -1,5 +1,12 @@
 package net.blazn.orin.engine.Managers;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
 import net.blazn.orin.Main;
 import net.blazn.orin.engine.Utils.ChatUtil;
@@ -34,19 +41,19 @@ public class RankManager {
 
     private FileConfiguration ranksConfig;
 
+    //private final ProtocolManager protocolManager;
     private final SQLManager sqlManager;
     private final NameManager nameManager;
-    private final NametagManager nametagManager;
     private final JavaPlugin plugin;
     private List<String> ranks;
     private final Map<UUID, UUID> playerTargetMap = new HashMap<>();
     private final Map<UUID, String> fakeRanks = new HashMap<>();
 
-    public RankManager(JavaPlugin plugin, SQLManager sqlManager, NameManager nameManager, NametagManager nametagManager) {
+    public RankManager(JavaPlugin plugin, SQLManager sqlManager, NameManager nameManager) {
         this.plugin = plugin;
+        //this.protocolManager = protocolManager;
         this.sqlManager = sqlManager;
         this.nameManager = nameManager;
-        this.nametagManager = nametagManager;
 
         loadRanksFile();
         initializeDefaultRanks();
@@ -406,8 +413,9 @@ public class RankManager {
         }
 
         //Main.getPlayerTags().put(player.getUniqueId(), formattedName);
-        //updateNameTag(player, rank, rankColor);
-        setNametag(player, formattedName);
+        updateNameTag(player, rank, rankColor);
+        //setNametag(player, formattedName);
+        //changeName(player, ChatUtil.stripSec(formattedName));
     }
 
     public void startPingTabUpdater() {
@@ -419,34 +427,6 @@ public class RankManager {
             }
         }, 0L, 40L);
     }
-
-    public void setNametag(Player player, String newName) {
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-
-        // Clean old team if it exists
-        Team team = scoreboard.getTeam(player.getUniqueId().toString().substring(0, 16));
-        if (team != null) {
-            team.unregister();
-        }
-
-        // Create a unique team for this player
-        team = scoreboard.registerNewTeam(player.getUniqueId().toString().substring(0, 16));
-
-        // Use the "prefix" as the whole fake name
-        // (prefix length max = 16 chars before MC 1.13, 64 after)
-        team.setPrefix(newName);
-
-        // Hide the actual Mojang nametag
-        team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.valueOf(newName));
-
-        // Add the player to this team (they'll inherit the prefix as their shown nametag)
-        team.addEntry(player.getName());
-
-        // Update chat + tablist too if desired
-        player.setDisplayName(newName);
-        player.setPlayerListName(newName);
-    }
-
 
     private void updateNameTag(Player player, String rank, String rankColor) {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();

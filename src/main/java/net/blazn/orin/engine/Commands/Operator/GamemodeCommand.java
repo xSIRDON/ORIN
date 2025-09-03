@@ -2,6 +2,7 @@ package net.blazn.orin.engine.Commands.Operator;
 
 import net.blazn.orin.engine.Managers.PermissionsManager;
 import net.blazn.orin.engine.Managers.RankManager;
+import net.blazn.orin.engine.Managers.WatchdogManager;
 import net.blazn.orin.engine.Utils.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -18,12 +19,14 @@ public class GamemodeCommand implements CommandExecutor {
 
     private final RankManager rankManager;
     private final PermissionsManager permissionsManager;
+    private final WatchdogManager watchdogManager;
     private final JavaPlugin plugin;
     private final List<String> allowedRanks = Arrays.asList("OWNER", "DEVELOPER", "ADMIN", "SRMOD");
 
-    public GamemodeCommand(JavaPlugin plugin, RankManager rankManager, PermissionsManager permissionsManager) {
+    public GamemodeCommand(JavaPlugin plugin, RankManager rankManager, PermissionsManager permissionsManager, WatchdogManager watchdogManager) {
         this.rankManager = rankManager;
         this.permissionsManager = permissionsManager;
+        this.watchdogManager = watchdogManager;
         this.plugin = plugin;
         plugin.getCommand("gamemode").setExecutor(this);
         plugin.getCommand("gmc").setExecutor(this);
@@ -80,6 +83,18 @@ public class GamemodeCommand implements CommandExecutor {
         // If no gamemode determined, send usage message
         if (targetMode == null) {
             sender.sendMessage(ChatUtil.red + "Usage" + ChatUtil.darkGray + ":" + ChatUtil.white + " /gamemode <creative/survival> [player]");
+            return true;
+        }
+
+        // ✅ Watchdog checks
+        if (watchdogManager.isInWatchdog(targetPlayer)) {
+            sender.sendMessage(ChatUtil.darkRed + "❌ " + ChatUtil.red +
+                    "You cannot change gamemode of players in watchdog mode.");
+            return true;
+        }
+        if (sender instanceof Player && watchdogManager.isInWatchdog((Player) sender)) {
+            sender.sendMessage(ChatUtil.darkRed + "❌ " + ChatUtil.red +
+                    "You cannot use gamemode commands while in watchdog mode.");
             return true;
         }
 

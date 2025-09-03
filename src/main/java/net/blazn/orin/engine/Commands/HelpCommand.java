@@ -84,6 +84,7 @@ public class HelpCommand implements CommandExecutor {
         addCommand(opCommands, "/heal [player]", "Heal yourself or others.");
         addCommand(opCommands, "/kill [player]", "Kill yourself or others.");
         addCommand(opCommands, "/tp <player|coords>", "Teleport players or coordinates.");
+        addCommand(opCommands, "/vanish [player]", "Make player invisible.");
         addCommand(opCommands, "/setmotd <message>", "Set server message of the day.");
 
     }

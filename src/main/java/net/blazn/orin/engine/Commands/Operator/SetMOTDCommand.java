@@ -72,7 +72,7 @@ public class SetMOTDCommand implements CommandExecutor {
             }
 
         } catch (IOException e) {
-            sender.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " Failed to update server.properties");
+            sender.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.white + " Failed to update server.properties");
             e.printStackTrace();
         }
 

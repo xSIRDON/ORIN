@@ -48,7 +48,14 @@ public class DisguiseCommand implements CommandExecutor {
 
         switch (command) {
             case "disguise" -> disguiseManager.disguise(player);
-            case "undisguise" -> disguiseManager.undisguise(player);
+            case "undisguise" -> {
+                // ✅ Check if player is actually disguised
+                if (!disguiseManager.isDisguised(player.getUniqueId())) {
+                    player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.white + " You are not disguised.");
+                    return true;
+                }
+                disguiseManager.undisguise(player);
+            }
             default -> player.sendMessage(ChatUtil.red + "Unknown command.");
         }
 

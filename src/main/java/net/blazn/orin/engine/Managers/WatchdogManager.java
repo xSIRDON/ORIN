@@ -17,6 +17,7 @@ public class WatchdogManager {
     private final TablistManager tablistManager;
     private final Map<UUID, ItemStack[]> savedInventories = new HashMap<>();
     private final Map<UUID, Location> savedLocations = new HashMap<>();
+    private final Map<UUID, GameMode> savedGameModes = new HashMap<>();
     private final Set<UUID> watchdogPlayers = new HashSet<>();
 
     public WatchdogManager(JavaPlugin plugin, NameManager nameManager, TablistManager tablistManager) {
@@ -46,6 +47,7 @@ public class WatchdogManager {
         // Save inventory & location
         savedInventories.put(playerId, player.getInventory().getContents());
         savedLocations.put(playerId, player.getLocation());
+        savedGameModes.put(playerId, player.getGameMode());
 
         // Clear inventory & enable flight
         if (player.getGameMode() != GameMode.CREATIVE) {
@@ -94,10 +96,19 @@ public class WatchdogManager {
             savedLocations.remove(playerId);
         }
 
-        // Reset flight & gamemode
-        player.setAllowFlight(false);
-        player.setFlying(false);
-        player.setGameMode(GameMode.SURVIVAL);
+        // Restore gamemode
+        if (savedGameModes.containsKey(playerId)) {
+            player.setGameMode(savedGameModes.get(playerId));
+            savedGameModes.remove(playerId);
+        } else {
+            player.setGameMode(GameMode.SURVIVAL);
+        }
+
+        // Reset flight (only if not in creative)
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            player.setAllowFlight(false);
+            player.setFlying(false);
+        }
 
         // Show player to all players
         Bukkit.getOnlinePlayers().forEach(p -> p.showPlayer(plugin, player));

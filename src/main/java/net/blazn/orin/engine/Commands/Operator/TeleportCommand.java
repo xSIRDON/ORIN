@@ -73,7 +73,7 @@ public class TeleportCommand implements CommandExecutor {
             Player destination = Bukkit.getPlayer(args[1]);
 
             if (target == null || destination == null) {
-                player.sendMessage(ChatUtil.red + "One or both players are not online.");
+                player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " One or both players are not online.");
                 return true;
             }
 

@@ -2,6 +2,7 @@ package net.blazn.orin.engine.Commands.Operator;
 
 import net.blazn.orin.engine.Managers.PermissionsManager;
 import net.blazn.orin.engine.Managers.RankManager;
+import net.blazn.orin.engine.Managers.WatchdogManager;
 import net.blazn.orin.engine.Utils.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -17,12 +18,14 @@ public class ClearCommand implements CommandExecutor {
 
     private final RankManager rankManager;
     private final PermissionsManager permissionsManager;
+    private final WatchdogManager watchdogManager;
     private final JavaPlugin plugin;
     private final List<String> allowedRanks = Arrays.asList("OWNER", "DEVELOPER", "ADMIN");
 
-    public ClearCommand(JavaPlugin plugin, RankManager rankManager, PermissionsManager permissionsManager) {
+    public ClearCommand(JavaPlugin plugin, RankManager rankManager, PermissionsManager permissionsManager, WatchdogManager watchdogManager) {
         this.rankManager = rankManager;
         this.permissionsManager = permissionsManager;
+        this.watchdogManager = watchdogManager;
         this.plugin = plugin;
         plugin.getCommand("clear").setExecutor(this);
     }
@@ -44,6 +47,11 @@ public class ClearCommand implements CommandExecutor {
                 return true;
             }
 
+            if (watchdogManager.isInWatchdog(target)) {
+                sender.sendMessage(ChatUtil.darkRed + "❌ " + ChatUtil.red + "You cannot clear the inventory of a player in watchdog mode.");
+                return true;
+            }
+
             clearInventory(sender, target);
             return true;
         }
@@ -61,12 +69,20 @@ public class ClearCommand implements CommandExecutor {
         // If no arguments, clear sender's own inventory
         if (args.length == 0) {
             target = player;
+            if (watchdogManager.isInWatchdog(target)) {
+                sender.sendMessage(ChatUtil.darkRed + "❌ " + ChatUtil.red + "You cannot clear your inventory in watchdog mode.");
+            }
         } else {
             // If argument is provided, attempt to clear another player's inventory
             target = Bukkit.getPlayer(args[0]);
 
             if (target == null) {
                 player.sendMessage(ChatUtil.notOnline);
+                return true;
+            }
+
+            if (watchdogManager.isInWatchdog(target)) {
+                player.sendMessage(ChatUtil.darkRed + "❌ " + ChatUtil.red + "You cannot clear the inventory of a player in watchdog mode.");
                 return true;
             }
 

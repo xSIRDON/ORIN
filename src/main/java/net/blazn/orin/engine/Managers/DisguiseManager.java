@@ -185,7 +185,10 @@ public class DisguiseManager {
     public void undisguise(Player player) {
         UUID uuid = player.getUniqueId();
 
-        if (!isDisguised(uuid)) return;
+        if (!isDisguised(uuid)) {
+            //player.sendMessage(ChatUtil.darkRed + "❌ " + ChatUtil.white + "You are not disguised.");
+            return;
+        }
 
         // Restore skin
         PlayerProfile originalProfile = originalProfiles.remove(uuid);

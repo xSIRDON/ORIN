@@ -1,0 +1,247 @@
+name: ORIN
+version: '1.0-SNAPSHOT'
+main: net.blazn.orin.Main
+author: BLAZN
+description: Server management system
+api-version: 1.21.8 # Change to your server's version
+# ✅ Commands Registration
+commands:
+  # Regular Commands
+  help:
+    description: Shows list of commands.
+    usage: /help
+    permission: orin.help
+  list:
+    description: Shows list of players online.
+    usage: /list
+    permission: orin.list
+  msg:
+    description: Sends private message to another player.
+    usage: /msg <player> <message>
+    permission: orin.message
+  ping:
+    description: Shows player connection to the server.
+    usage: /ping
+    permission: orin.ping
+  # Staff Commands
+  staff:
+    description: Enables staff-chat.
+    usage: /staff
+    permission: orin.staff
+  watchdog:
+    description: Enables watchdog mode.
+    usage: /watchdog
+    aliases: [ wd ]
+    permission: orin.watchdog
+  # Premium Commands
+  disguise:
+    description: Disguise yourself as a random player.
+    usage: /disguise
+    aliases: [ d ]
+    permission: orin.disguise
+  undisguise:
+    description: Undisguise yourself.
+    usage: /undisguise
+    aliases: [ ud ]
+    permission: orin.disguise
+  nick:
+    description: Change your nickname.
+    usage: /nick <name>
+    permission: orin.nick
+  fly:
+    description: Allow flight for player.
+    usage: /fly <player>
+    permission: orin.fly
+  # Operator Commands
+  clear:
+    description: Clears player inventory.
+    usage: /clear <player>
+    permission: orin.clear
+  freeze:
+    description: Freezes player(s).
+    usage: /freeze <player|all>
+    permission: orin.freeze
+  unfreeze:
+    description: Unfreezes player(s).
+    usage: /unfreeze <player|all>
+    permission: orin.unfreeze
+  godmode:
+    description: Toggle invincibility mode.
+    usage: /godmode <player>
+    aliases: [ god ]
+    permission: orin.god
+  gamemode:
+    description: Change your game mode.
+    usage: /gamemode <creative/survival>
+    aliases: [gmc, gms]
+    permission: orin.gamemode
+  heal:
+    description: Restore full health, hunger, and remove effects.
+    usage: /heal <player>
+    permission: orin.heal
+  kill:
+    description: Kill yourself or others.
+    usage: /kill <player>
+    permission: orin.kill
+  tp:
+    description: Teleport to another player, teleport others, or teleport to coordinates.
+    usage: /tp <player> | /tp <player1> <player2> | /tp <x> <y> <z>
+    aliases: [teleport]
+    permission: orin.teleport
+  vanish:
+    description: Make player invisible.
+    usage: /vanish | /vanish <player>
+    aliases: [ invisible, hide ]
+    permission: orin.vanish
+  setmotd:
+    description: Set server message of the day.
+    permission: orin.setmotd
+  # Admin Commands
+  rank:
+    description: Manage player ranks.
+    usage: /rank <player> [rank]
+    aliases: [ setrank ]
+    permission: orin.rank
+  unban:
+    description: Unban a player.
+    usage: /unban <player>
+    permission: orin.unban
+  unmute:
+    description: Unmute a player.
+    usage: /unmute <player>
+    permission: orin.unmute
+  clearhistory:
+    description: Clears a player's punishment history.
+    usage: /clearhistory <player>
+    permission: orin.clearhistory
+  broadcast:
+    description: Broadcasts server message.
+    usage: /broadcast <message>
+    aliases: [ bc, say, announce ]
+    permission: orin.broadcast
+  # Punishment Commands
+  kick:
+    description: Kick a player from the server.
+    usage: /kick <player> <reason>
+    permission: orin.kick
+  ban:
+    description: Permanently ban a player.
+    usage: /ban <player> <reason>
+    permission: orin.ban
+  tempban:
+    description: Temporarily ban a player.
+    usage: /tempban <player> <duration> <reason>
+    permission: orin.tempban
+  mute:
+    description: Mute a player permanently.
+    usage: /mute <player> <reason>
+    permission: orin.mute
+  tempmute:
+    description: Temporarily mute a player.
+    usage: /tempmute <player> <duration> <reason>
+    permission: orin.tempmute
+  history:
+    description: View a player's punishment history.
+    usage: /history <player>
+    permission: orin.history
+  warn:
+    description: Warns a player.
+    usage: /warn <player> <reason>
+    permission: orin.warn
+# ✅ Permissions
+permissions:
+  # Regular perms
+  orin.help:
+    description: Allows player to see help menu.
+    default: true
+  orin.list:
+    description: Allows player to see list of online players.
+    default: true
+  orin.message:
+    description: Allows player to send private messages.
+    default: true
+  orin.ping:
+    description: Allows a player to see connection to server.
+    default: true
+  # Staff perms
+  orin.rank:
+    description: Allows a player to set ranks.
+    default: op
+  orin.staff:
+    description: Allows a player to use staff-chat.
+    default: true
+  orin.watchdog:
+    description: Allows a player to use watchdog mode.
+    default: true
+  # Premium perms
+  orin.disguise:
+    description: Allows a player to disguise as a random player.
+    default: true
+  orin.nick:
+    description: Allows a player to set their nickname.
+    default: true
+  orin.fly:
+    description: Allows a player to toggle flight.
+    default: true
+  # Operator perms
+  orin.clear:
+    description: Allows a player to clear their inventory for themselves or others.
+    default: true
+  orin.freeze:
+    description: Allows a player to freeze player(s).
+    default: true
+  orin.unfreeze:
+    description: Allows a player to unfreeze player(s).
+    default: true
+  orin.gamemode:
+    description: Allows a player to change their game mode.
+    default: true
+  orin.god:
+    description: Allows a player to toggle god mode for themselves or others.
+    default: true
+  orin.heal:
+    description: Allows a player to heal themselves or others.
+    default: true
+  orin.kill:
+    description: Allows a player to kill themselves or others.
+    default: true
+  orin.teleport:
+    description: Allows teleportation.
+    default: true
+  orin.vanish:
+    description: Allows vanish.
+    default: true
+  orin.setmotd:
+    description: Allows setting of MOTD.
+    default: op
+  # Punishment perms
+  orin.kick:
+    description: Allows a player to kick others.
+    default: true
+  orin.ban:
+    description: Allows a player to permanently ban others.
+    default: true
+  orin.tempban:
+    description: Allows a player to temporarily ban others.
+    default: true
+  orin.mute:
+    description: Allows a player to mute others permanently.
+    default: true
+  orin.tempmute:
+    description: Allows a player to temporarily mute others.
+    default: true
+  orin.unban:
+    description: Allows a player to unban others.
+    default: true
+  orin.unmute:
+    description: Allows a player to unmute others.
+    default: true
+  orin.history:
+    description: Allows a player to view another player's punishment history.
+    default: true
+  orin.clearhistory:
+    description: Allows a player to clear another player's punishment history.
+    default: op
+  orin.warn:
+    description: Allows a player to warn another player.
+    default: true

@@ -1,0 +1,83 @@
+server-gamemode: "Hub"
+
+server-website: "orinnetwork.gg"
+
+# ✅ MySQL Database Settings
+database:
+  host: "gamesla50.bisecthosting.com"
+  port: "3306"
+  name: "s1028691_ORIN"
+  user: "u1028691_AneLu9EOx2"
+  password: "xNbqXYo8s0rx8sbM5L9wuSZP"
+
+# ✅ Server Prefixes
+server-prefix: "&3&lORIN &8| &f"
+staff-prefix: "&c&lSTAFF &8| &f"
+warning-prefix: "&c&lWARNING &8| &f"
+
+# ✅ MOTD Settings
+motd:
+  message: "&b&lORIN NETWORK\n&eGreatness awaits..."
+  center: true
+  offsets:
+    - -3  # First line offset
+    - -2  # Second line offset
+
+# ✅ Chat System
+chat:
+  format: "{displayname}&8: {message}"
+
+# ✅ Join Message Settings
+messages:
+  join:
+    enabled: true # Set to false to disable join messages
+    format: "{displayname} &fhas joined."
+  quit:
+    enabled: true
+    format: "{displayname} &fhas left."
+
+# ✅ Tablist Settings
+tablist:
+  show-ping: false
+
+# ✅ Punishment Settings
+punishments:
+  # GUI Punishment Durations
+  durations:
+    - "30 Minutes"
+    - "1 Hour"
+    - "12 Hours"
+    - "1 Day"
+    - "1 Week"
+    - "2 Weeks"
+    - "1 Month"
+    - "1 Year"
+    - "Permanent"
+#################################
+  warn:
+    # Warns before kicks & eventually bans
+    limit: 3
+  kick:
+    # GUI Kick Reasons
+    reasons:
+      - "Glitch Abuse"
+      - "Link Sharing"
+      - "Spamming"
+      - "Verbal Abuse"
+      - "Breaking Server Rules"
+  ban:
+    # GUI Ban Reasons
+    reasons:
+      - "Blatant Hacking"
+      - "Admitted Hacking"
+      - "Autoclicker"
+      - "Ghost Client"
+      - "Other"
+  mute:
+    # GUI Mute Reasons
+    reasons:
+      - "Inappropriate References"
+      - "Disrespecting Staff"
+      - "Hate Speech"
+      - "Advertising"
+      - "Toxic Behavior"

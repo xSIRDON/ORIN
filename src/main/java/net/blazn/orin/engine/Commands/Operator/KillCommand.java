@@ -42,7 +42,7 @@ public class KillCommand implements CommandExecutor {
         // If no arguments, kill self
         if (args.length == 0 && player != null) {
             player.setHealth(0);
-            player.sendMessage(ChatUtil.darkRed + "☠" + ChatUtil.red + " You have been killed.");
+            player.sendMessage(ChatUtil.darkRed + "☠" + ChatUtil.white + " You have been killed.");
             return true;
         }
 
@@ -57,7 +57,7 @@ public class KillCommand implements CommandExecutor {
         // Prevent lower-ranked players from killing higher-ranked ones
         String targetRank = rankManager.getRank(target);
         if (!permissionsManager.canModify(playerRank, targetRank)) {
-            sender.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.red + " You cannot kill this player.");
+            sender.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.white + " You cannot kill this player.");
             return true;
         }
 

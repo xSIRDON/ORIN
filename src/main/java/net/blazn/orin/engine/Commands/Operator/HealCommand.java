@@ -19,7 +19,7 @@ public class HealCommand implements CommandExecutor {
     private final RankManager rankManager;
     private final PermissionsManager permissionsManager;
     private final JavaPlugin plugin;
-    private final List<String> allowedRanks = Arrays.asList("OWNER", "DEVELOPER", "ADMIN", "SRMOD");
+    private final List<String> allowedRanks = Arrays.asList("OWNER", "DEVELOPER", "ADMIN");
 
     public HealCommand(JavaPlugin plugin, RankManager rankManager, PermissionsManager permissionsManager) {
         this.rankManager = rankManager;

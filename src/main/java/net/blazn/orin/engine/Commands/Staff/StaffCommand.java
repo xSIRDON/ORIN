@@ -44,11 +44,11 @@ public class StaffCommand implements CommandExecutor {
         // Toggle staff chat mode
         if (staffChatEnabled.contains(player)) {
             staffChatEnabled.remove(player);
-            player.sendMessage(ChatUtil.darkRed + "❌" + ChatUtil.white + " Staff chat" + ChatUtil.gray + ": " +
+            player.sendMessage(ChatUtil.bgold + "\uD83D\uDCDC" + ChatUtil.white + " Staff chat" + ChatUtil.gray + ": " +
                     ChatUtil.bred + "DISABLED");
         } else {
             staffChatEnabled.add(player);
-            player.sendMessage(ChatUtil.green + "✔" + ChatUtil.white + " Staff chat" + ChatUtil.gray + ": " +
+            player.sendMessage(ChatUtil.bgold + "\uD83D\uDCDC" + ChatUtil.white + " Staff chat" + ChatUtil.gray + ": " +
                     ChatUtil.bgreen + "ENABLED");
         }
 
